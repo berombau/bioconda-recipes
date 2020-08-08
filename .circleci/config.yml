@@ -170,15 +170,12 @@ jobs:
       - *common
       - *restore_cache
       - *setup
-      - *save_cache
       - *setup_macos_sdk
       - run:
           name: Building and testing
           command: |
-            bioconda-utils build recipes config.yml \
+            python -c 'import bioconda_utils.utils as u; u.ENV_VAR_WHITELIST.append("HOME"); from bioconda_utils.cli import main; main()' build recipes config.yml \
             --git-range master HEAD
-      - *store_built_packages
-      - *store_artifacts
 
   # build, test and upload on linux
   upload-linux:
