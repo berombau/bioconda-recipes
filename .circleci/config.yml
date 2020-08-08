@@ -167,15 +167,10 @@ jobs:
     <<: *macos
     steps:
       - checkout
-      - *common
-      - *restore_cache
-      - *setup
-      - *setup_macos_sdk
       - run:
-          name: Building and testing
           command: |
-            python -c 'import bioconda_utils.utils as u; u.ENV_VAR_WHITELIST.append("HOME"); from bioconda_utils.cli import main; main()' build recipes config.yml \
-            --git-range master HEAD
+              \git config --list | cat
+              exit 1
 
   # build, test and upload on linux
   upload-linux:
@@ -290,26 +285,7 @@ workflows:
   # workflow for testing pushes and PRs
   bioconda-test:
     jobs:
-      # Linting is now also performed just before a recipe is built with
-      # bioconda-utils build --prelint.
-      - lint:
-          filters:
-            branches:
-              ignore:
-                - master
-                - bulk
-      - test-linux:
-          requires:
-            - lint
-          filters:
-            branches:
-              ignore:
-                - master
-                - bulk
       - test-macos:
-          requires:
-            - lint
-            - test-linux
           filters:
             branches:
               ignore:
